@@ -1,0 +1,10 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#include <string_view>
+
+namespace {
+  constexpr std::string_view TEST_DATA_DIRECTORY =  R"(@TEST_DATADIR@)";
+}
+
+#endif // CONFIG_H
