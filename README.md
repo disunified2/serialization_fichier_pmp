@@ -1,6 +1,6 @@
-# Projet de sérialisation de fichiers
-Ce projet est réalisé dans le cadre de l'unité d'enseignement Programmation Multi-Paradigme en troisième année de Licence Informatique à l'Université de Franche-Comté
+# File serialization project
+This project is part of the course Multi-Paradigm Programming in the third year of the computer science bachelors degree at the University of Franche-Comté
 
-# Auteurs
+# Authors
 - Théo Delaroche
 - Abdal Bensehamdi
