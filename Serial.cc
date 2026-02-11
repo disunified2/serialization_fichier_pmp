@@ -31,8 +31,16 @@ namespace serial {
     }
 
     // Write implementation
-    std::size_t write(const std::byte* data, std::size_t size) {
-        return 0;
+    std::size_t OBinaryFile::write(const std::byte* data, std::size_t size) const {
+        if (!file_) {
+            throw std::runtime_error("No file opened");
+        }
+
+        std::size_t written_bytes = std::fwrite(data, 1, size, file_);
+        if (written_bytes != size) {
+            throw std::runtime_error("Failed to write all bytes to file");
+        }
+        return written_bytes;
     }
 
 }
