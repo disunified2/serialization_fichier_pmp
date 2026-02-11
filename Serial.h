@@ -40,6 +40,45 @@ namespace serial {
      * Returns the number of bytes actually written
      */
     std::size_t write(const std::byte* data, std::size_t size);
+
+    /**
+     *
+     * Rule of five
+     *
+     */
+
+    /**
+     * @brief Destructor
+     */
+    ~OBinaryFile();
+
+    /**
+     * @brief Copy constructor
+     *
+     * Construction via copy is not allowed as it can create problems with
+     * simultaneous reading of the same file
+     */
+    OBinaryFile(const OBinaryFile& other) = delete;
+
+    /**
+     * @brief Move constructor
+     */
+    OBinaryFile(OBinaryFile&& other) noexcept;
+
+    /**
+     * @brief Copy assignment
+     *
+     * Same as for copy constructor, we do not want any copies
+     */
+    OBinaryFile& operator=(const OBinaryFile& other) = delete;
+
+    /**
+     * @brief Move assignment
+     */
+    OBinaryFile& operator=(OBinaryFile&& other) noexcept;
+
+  private:
+    FILE* file_;
   };
 
   /**
