@@ -79,7 +79,6 @@ namespace serial {
 
   private:
     FILE* file_;
-    char* file_name;
   };
 
   /**
