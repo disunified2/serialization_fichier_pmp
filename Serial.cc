@@ -30,4 +30,9 @@ namespace serial {
         return *this;
     }
 
+    // Write implementation
+    std::size_t write(const std::byte* data, std::size_t size) {
+        return 0;
+    }
+
 }
