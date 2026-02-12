@@ -50,6 +50,66 @@ namespace serial {
         return file;
     }
 
+    OBinaryFile& operator<<(OBinaryFile &file, int8_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, uint16_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, int16_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, uint32_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, int32_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, uint64_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, int64_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, char x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, float x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, double x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, bool x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, const std::string& x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
     /**
      * @brief Constructor
      *
