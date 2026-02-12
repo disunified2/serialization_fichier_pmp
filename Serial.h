@@ -95,12 +95,49 @@ namespace serial {
     IBinaryFile(const std::string& filename);
 
     /**
+    * @brief Destructor
+    */
+    ~IBinaryFile();
+
+    /**
+     * @brief Copy constructor
+     *
+     * Construction via copy is not allowed as it can create problems with
+     * simultaneous reading of the same file
+     */
+    IBinaryFile(const IBinaryFile & other) = delete;
+
+    /**
+     * @brief Copy assignment
+     *
+     * Same as for copy constructor, we do not want any copies
+     */
+    IBinaryFile& operator=(const IBinaryFile& other) = delete;
+
+    /**
+     *
+     *
+     */
+    IBinaryFile(IBinaryFile&& other) noexcept;  // move constructor
+
+    /**
+     *
+     *
+     */
+    IBinaryFile& operator=(IBinaryFile&& other) noexcept;   //move assignment
+
+
+    /**
      * @brief Read `size` bytes from the file and store them in the buffer
      * pointed by `data`.
      *
      * Returns the number of bytes actually read.
      */
     std::size_t read(std::byte* data, std::size_t size);
+
+  private:
+    FILE *file_;
+    size_t position;
   };
 
 
