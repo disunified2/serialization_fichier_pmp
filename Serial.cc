@@ -33,7 +33,7 @@ namespace serial {
     }
 
     // Write implementation
-    std::size_t OBinaryFile::write(const std::byte* data, std::size_t size) const {
+    std::size_t OBinaryFile::write(const std::byte* data, std::size_t size) {
         if (!file_) {
             throw std::runtime_error("No file opened");
         }
@@ -45,4 +45,8 @@ namespace serial {
         return written_bytes;
     }
 
+    OBinaryFile& operator<<(OBinaryFile &file, uint8_t &x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
 }
