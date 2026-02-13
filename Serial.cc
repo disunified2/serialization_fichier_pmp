@@ -1,8 +1,12 @@
 #include "Serial.h"
+
+#include <charconv>
 #include <stdexcept>
 #include <utility>
 
 #include <stdexcept>
+
+#include "gtest/gtest-printers.h"
 
 namespace serial {
 
@@ -124,16 +128,13 @@ namespace serial {
 
         if (file_ == nullptr)
             throw std::runtime_error(filename + " could not be opened");
-
-        this->position = 0;
     }
 
     //Destructor
     IBinaryFile::~IBinaryFile() {
         if (file_) {
-            auto res = std::fclose(file_);
-            if (res != 0)
-                throw std::runtime_error("File could not be closed");
+            std::fclose(file_);
+
             file_ = nullptr;
         }
     }
@@ -162,25 +163,26 @@ namespace serial {
     std::size_t IBinaryFile::read(std::byte* data, std::size_t size) {
         auto res = fread(data,sizeof(std::byte),size,file_);
 
-        position += res;
-
         return res;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, int8_t& x) {
         std::byte data;
+        x = 0;
         size_t res = file.read(&data,1);
 
         if (res == 0)
             throw std::runtime_error("End of file reached");
 
-        x = static_cast<int8_t>(data);
+        x = std::to_integer<int8_t>(data);
 
         return file;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, uint8_t& x) {
         std::byte data;
+        x = 0;
+
         size_t res = file.read(&data,1);
 
         if (res == 0)
@@ -193,17 +195,17 @@ namespace serial {
 
     IBinaryFile& operator>>(IBinaryFile& file, int16_t& x){
         std::byte data;
-        x = 0;
+        uint16_t y = 0;
 
         for (int i = 1; i >= 0; i--) {
             size_t res = file.read(&data,1);
             if (res == 0)
                 throw std::runtime_error("End of file reached");
 
-            auto tmp = static_cast<int8_t>(data);
-            x |= static_cast<int16_t>(tmp) << (8 * i);
+            auto tmp = std::to_integer<uint8_t>(data);
+            y |= static_cast<uint16_t>(tmp) << (8 * i);
         }
-
+        x = static_cast<int16_t>(y);
         return file;
     }
 
@@ -216,7 +218,7 @@ namespace serial {
             if (res == 0)
                 throw std::runtime_error("End of file reached");
 
-            auto tmp = static_cast<uint8_t>(data);
+            auto tmp = std::to_integer<uint8_t>(data);
             x |= static_cast<uint16_t>(tmp) << (8 * i);
         }
 
@@ -225,17 +227,17 @@ namespace serial {
 
     IBinaryFile& operator>>(IBinaryFile& file, int32_t& x){
         std::byte data;
-        x = 0;
+        uint32_t y = 0;
 
-        for (int i = 2; i >= 0; i--) {
+        for (int i = 3; i >= 0; i--) {
             size_t res = file.read(&data,1);
             if (res == 0)
                 throw std::runtime_error("End of file reached");
 
-            auto tmp = static_cast<int8_t>(data);
-            x |= static_cast<int16_t>(tmp) << (8 * i);
+            auto tmp = std::to_integer<uint8_t>(data);
+            y |= static_cast<uint32_t>(tmp) << (8 * i);
         }
-
+        x = static_cast<int32_t>(y);
         return file;
     }
 
@@ -243,13 +245,13 @@ namespace serial {
         std::byte data;
         x = 0;
 
-        for (int i = 2; i >= 0; i--) {
+        for (int i = 3; i >= 0; i--) {
             size_t res = file.read(&data,1);
             if (res == 0)
                 throw std::runtime_error("End of file reached");
 
-            auto tmp = static_cast<uint8_t>(data);
-            x |= static_cast<uint16_t>(tmp) << (8 * i);
+            auto tmp = std::to_integer<uint8_t>(data);
+            x |= static_cast<uint32_t>(tmp) << (8 * i);
         }
 
         return file;
@@ -257,17 +259,17 @@ namespace serial {
 
     IBinaryFile& operator>>(IBinaryFile& file, int64_t& x){
         std::byte data;
-        x = 0;
+        uint64_t y = 0;
 
-        for (int i = 3; i >= 0; i--) {
+        for (int i = 7; i >= 0; i--) {
             size_t res = file.read(&data,1);
             if (res == 0)
                 throw std::runtime_error("End of file reached");
 
-            auto tmp = static_cast<int8_t>(data);
-            x |= static_cast<int16_t>(tmp) << (8 * i);
+            auto tmp = std::to_integer<uint8_t>(data);
+            y |= static_cast<uint64_t>(tmp) << (8 * i);
         }
-
+        x = static_cast<int64_t>(y);
         return file;
     }
 
@@ -275,15 +277,45 @@ namespace serial {
         std::byte data;
         x = 0;
 
-        for (int i = 3; i >= 0; i--) {
+        for (int i = 7; i >= 0; i--) {
             size_t res = file.read(&data,1);
             if (res == 0)
                 throw std::runtime_error("End of file reached");
 
-            auto tmp = static_cast<uint8_t>(data);
-            x |= static_cast<uint16_t>(tmp) << (8 * i);
+            auto tmp = std::to_integer<uint8_t>(data);
+            x |= static_cast<uint64_t>(tmp) << (8 * i);
         }
 
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, char& x) {
+        std::byte data;
+
+        size_t res = file.read(&data,1);
+
+        if (res == 0)
+            throw std::runtime_error("End of file reached");
+
+        auto tmp = static_cast<unsigned char>(data);
+        x = static_cast<char>(tmp);
+
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, float& x) {
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, double& x) {
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, bool& x) {
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, std::string& x) {
         return file;
     }
 }
