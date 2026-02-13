@@ -291,6 +291,121 @@ TEST(SerialOBinaryFileBool, writeFalse) {
     EXPECT_FALSE(result);
   }
 }
+TEST(SerialOBinaryFileString, basic) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    const std::string value = "test";
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::string result;
+    file >> result;
+
+    EXPECT_EQ(result, "test");
+  }
+}
+TEST(SerialOBinaryFileString, emptyString) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    const std::string value;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::string result;
+    file >> result;
+
+    EXPECT_EQ(result, "");
+  }
+}
+
+TEST(SerialOBinaryFileVector, int16Vector) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::vector<int16_t> values;
+    values.reserve(10);
+    for (int16_t i = 0; i < 10; ++i) {
+      values.push_back(i);
+    }
+    file << values;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::vector<int16_t> values;
+    file >> values;
+
+    EXPECT_EQ(values.size(), 10);
+    for (int16_t i = 0; i < 10; ++i) {
+      EXPECT_EQ(values[i], i);
+    }
+  }
+}
+TEST(SerialOBinaryFileArray, int16Array) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::array<int16_t,10> values{};
+    for (int16_t i = 0; i < 10; ++i) {
+      values[i] = i;
+    }
+    file << values;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::array<int16_t,10> values{};
+    file >> values;
+
+    EXPECT_EQ(values.size(), 10);
+    for (int16_t i = 0; i < 10; ++i) {
+      EXPECT_EQ(values[i], i);
+    }
+  }
+}
+TEST(SerialOBinaryFileMap, intToStringMap) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::map<int, std::string> values;
+    values[1] = "one";
+    values[2] = "two";
+    values[3] = "three";
+    file << values;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::map<int, std::string> values;
+    file >> values;
+
+    EXPECT_EQ(values.size(), 3);
+    EXPECT_EQ(values[1], "one");
+    EXPECT_EQ(values[2], "two");
+    EXPECT_EQ(values[3], "three");
+  }
+}
+TEST(SerialOBinaryFileSet, intSet) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::set<int> values = {1, 2, 3, 5, 8};
+    file << values;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::set<int> values;
+    file >> values;
+
+    EXPECT_EQ(values.size(), 5);
+    EXPECT_TRUE(values.count(1) == 1);
+    EXPECT_TRUE(values.count(2) == 1);
+    EXPECT_TRUE(values.count(3) == 1);
+    EXPECT_TRUE(values.count(5) == 1);
+    EXPECT_TRUE(values.count(8) == 1);
+  }
+}
 
 
 

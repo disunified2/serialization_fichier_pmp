@@ -156,21 +156,40 @@ namespace serial {
 
   template<typename T>
   OBinaryFile& operator<<(OBinaryFile& file, const std::vector<T>& x) {
+    const auto size = static_cast<uint64_t>(x.size());
+    file << size;
+    for (const auto& elem : x) {
+      file << elem;
+    }
     return file;
   }
 
   template<typename T, std::size_t N>
   OBinaryFile& operator<<(OBinaryFile& file, const std::array<T,N>& x) {
+    for (const auto& elem : x) {
+      file << elem;
+    }
     return file;
   }
 
   template<typename K, typename V>
   OBinaryFile& operator<<(OBinaryFile& file, const std::map<K,V>& x) {
+    const auto size = static_cast<uint64_t>(x.size());
+    file << size;
+    for (const auto& [key, value] : x) {
+      file << key;
+      file << value;
+    }
     return file;
   }
 
   template<typename T>
   OBinaryFile& operator<<(OBinaryFile& file, const std::set<T>& x) {
+    const auto size = static_cast<uint64_t>(x.size());
+    file << size;
+    for (const auto& elem : x) {
+      file << elem;
+    }
     return file;
   }
 

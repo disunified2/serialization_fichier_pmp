@@ -135,8 +135,11 @@ namespace serial {
     }
 
     OBinaryFile& operator<<(OBinaryFile &file, const std::string& x) {
-        std::size_t len = x.length();
-        file.write(reinterpret_cast<const std::byte*>(&x), size(x)*sizeof(char));
+        const std::uint64_t len = x.length();
+        file << len;
+        for (std::uint64_t i = 0; i < len; i++) {
+            file << x[i];
+        }
         return file;
     }
 
