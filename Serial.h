@@ -137,7 +137,6 @@ namespace serial {
 
   private:
     FILE *file_;
-    size_t position;
   };
 
 
@@ -191,6 +190,15 @@ namespace serial {
 
   template<typename T>
   IBinaryFile& operator>>(IBinaryFile& file, std::vector<T>& x) {
+    T value;
+    uint64_t size;
+    file >> size;
+
+    for (auto i = 0; i < size; i++) {
+      file >> value;
+      x.push_back(value);
+    }
+
     return file;
   }
 

@@ -3,6 +3,7 @@
 #include <charconv>
 #include <stdexcept>
 #include <utility>
+#include <cstring>
 
 #include <stdexcept>
 
@@ -327,18 +328,55 @@ namespace serial {
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, float& x) {
+        std::byte data[4];
+
+        for (int i = 0; i < 4; i++) {
+            size_t res = file.read(&data[i],1);
+            if (res == 0)
+                throw std::runtime_error("End of file reached");
+        }
+
+        std::memcpy(&x,&data,sizeof(float));
+
         return file;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, double& x) {
+        std::byte data[8];
+
+        for (int i = 0; i < 8; i++) {
+            size_t res = file.read(&data[i],1);
+            if (res == 0)
+                throw std::runtime_error("End of file reached");
+        }
+
+        std::memcpy(&x,&data,sizeof(double));
+
         return file;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, bool& x) {
+        std::byte data;
+
+        size_t res = file.read(&data,1);
+        if (res == 0)
+            throw std::runtime_error("End of file reached");
+
+        x = static_cast<bool>(data);
+
         return file;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, std::string& x) {
+        char c;
+        uint64_t size;
+        file >> size;
+
+        for (auto i = 0; i < size; i++) {
+            file >> c;
+            x.push_back(c);
+        }
+
         return file;
     }
 }
