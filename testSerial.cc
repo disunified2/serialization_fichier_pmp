@@ -4,9 +4,6 @@
 
 #include "config.h"
 
-TEST(SerialTest, firstTest) {
-
-}
 
 // Constructor tests, works both for OBinaryFile and IBinaryFile
 TEST(SerialOBinaryFileConstructorTest, BasicConstructorTest) {
@@ -54,6 +51,249 @@ TEST(SerialOBinaryFileConstructorTest, MoveAssignmentTest) {
     EXPECT_EQ(result, 123456789u);
   }
 }
+TEST(SerialOBinaryFileUint16, write) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr uint16_t value = 65535u;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    uint16_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 65535u);
+  }
+}
+TEST(SerialOBinaryFileInt16, writePositive) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr uint16_t value = 32767;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    uint16_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 32767);
+  }
+}
+TEST(SerialOBinaryFileInt16, writeNegative) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr int16_t value = -32767;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    int16_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, -32767);
+  }
+}
+TEST(SerialOBinaryFileUint32, write) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr uint32_t value = 123456789u;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    uint32_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 123456789u);
+  }
+}
+TEST(SerialOBinaryFileInt32, writePositive) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr int32_t value = 123456789;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    int32_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 123456789);
+  }
+}
+TEST(SerialOBinaryFileInt32, writeNegative) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr int32_t value = -123456789;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    int32_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, -123456789);
+  }
+}
+TEST(SerialOBinaryFileUint64, write) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr uint64_t value = 123456789u;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    uint64_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 123456789u);
+  }
+}
+TEST(SerialOBinaryFileUint64, writePositive) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr int64_t value = 123456789;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    int64_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 123456789);
+  }
+}
+TEST(SerialOBinaryFileUint64, writeNegative) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr int64_t value = -123456789;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    int64_t result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, -123456789);
+  }
+}
+TEST(SerialOBinaryFileChar, write) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    char value = 'a';
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    char result;
+    file >> result;
+
+    EXPECT_EQ(result, 'a');
+  }
+}
+TEST(SerialOBinaryFileFloat, writePositive) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr float value = 123456789.0f;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    float result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 123456789.0f);
+  }
+}
+TEST(SerialOBinaryFileFloat, writeNegative) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr float value = -123456789.0f;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    float result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, -123456789.0f);
+  }
+}
+TEST(SerialObinaryFileDouble, writePositive) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr double value = 123456789.0;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    double result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 123456789.0);
+  }
+}
+TEST(SerialObinaryFileDouble, writeNegative) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr double value = -123456789.0;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    double result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, -123456789.0);
+  }
+}
+TEST(SerialObinaryFileBool, writeTrue) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr bool value = true;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    bool result;
+    file >> result;
+
+    EXPECT_TRUE(result);
+  }
+}
+TEST(SerialOBinaryFileBool, writeFalse) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr bool value = false;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    bool result;
+    file >> result;
+
+    EXPECT_FALSE(result);
+  }
+}
+
+
+
 
 TEST(SerialIBinaryFileConstructorTest,MoveConstructorTest) {
   const std::string filename = "test.txt";
