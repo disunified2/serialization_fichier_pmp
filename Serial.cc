@@ -62,32 +62,54 @@ namespace serial {
     }
 
     OBinaryFile& operator<<(OBinaryFile &file, uint16_t x) {
-        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        std::byte data[2];
+        data[0] = static_cast<std::byte>(x >> 8 & 0xFF);
+        data[1] = static_cast<std::byte>(x & 0xFF);
+        file.write(data, 2);
         return file;
     }
 
     OBinaryFile& operator<<(OBinaryFile &file, int16_t x) {
-        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        std::byte data[2];
+        data[0] = static_cast<std::byte>(x >> 8 & 0xFF);
+        data[1] = static_cast<std::byte>(x & 0xFF);
+        file.write(data, 2);
         return file;
     }
 
     OBinaryFile& operator<<(OBinaryFile &file, uint32_t x) {
-        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        std::byte data[4];
+        for (int i = 3; i >= 0; --i) {
+            data[3-i] = static_cast<std::byte>(x >> (8 * i) & 0xFF);
+        }
+        file.write(data, 4);
         return file;
     }
 
     OBinaryFile& operator<<(OBinaryFile &file, int32_t x) {
-        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        std::byte data[4];
+        for (int i = 3; i >= 0; --i) {
+            data[3-i] = static_cast<std::byte>(x >> (8 * i) & 0xFF);
+        }
+        file.write(data, 4);
         return file;
     }
 
     OBinaryFile& operator<<(OBinaryFile &file, uint64_t x) {
-        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        std::byte data[8];
+        for (int i = 7; i >= 0; --i) {
+            data[7-i] = static_cast<std::byte>(x >> (8 * i) & 0xFF);
+        }
+        file.write(data, 8);
         return file;
     }
 
     OBinaryFile& operator<<(OBinaryFile &file, int64_t x) {
-        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        std::byte data[8];
+        for (int i = 7; i >= 0; --i) {
+            data[7-i] = static_cast<std::byte>(x >> (8 * i) & 0xFF);
+        }
+        file.write(data, 8);
         return file;
     }
 
