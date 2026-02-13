@@ -2,10 +2,12 @@
 #include <stdexcept>
 #include <utility>
 
+#include <stdexcept>
+
 namespace serial {
 
     OBinaryFile::OBinaryFile(const std::string& filename, Mode mode) : file_(nullptr) {
-        const char* open_mode = (mode == Truncate) ? "wb" : "rb";
+        const char* open_mode = (mode == Truncate) ? "wb" : "ab";
         file_ = ::fopen(filename.c_str(), open_mode);
         if (!file_) {
             throw std::runtime_error("Cannot open file " + filename);
@@ -33,10 +35,89 @@ namespace serial {
     }
 
     // Write implementation
-    std::size_t write(const std::byte* data, std::size_t size) {
-        return 0;
+    std::size_t OBinaryFile::write(const std::byte* data, std::size_t size) {
+        if (!file_) {
+            throw std::runtime_error("No file opened");
+        }
+
+        const std::size_t written_bytes = std::fwrite(data, 1, size, file_);
+        if (written_bytes != size) {
+            throw std::runtime_error("Failed to write all bytes to file");
+        }
+        return written_bytes;
     }
 
+    OBinaryFile& operator<<(OBinaryFile &file, uint8_t &x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, int8_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, uint16_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, int16_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, uint32_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, int32_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, uint64_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, int64_t x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, char x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, float x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, double x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, bool x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), sizeof(x));
+        return file;
+    }
+
+    OBinaryFile& operator<<(OBinaryFile &file, const std::string& x) {
+        file.write(reinterpret_cast<const std::byte*>(&x), size(x)*sizeof(char));
+        return file;
+    }
+
+    /**
+     * @brief Constructor
+     *
+     * Opens the file for reading or throws a `std::runtime_error` in case of
+     * error.
+     */
     //Constructor
     IBinaryFile::IBinaryFile(const std::string& filename) {
         file_ = std::fopen(filename.c_str(), "rb");
