@@ -191,7 +191,7 @@ namespace serial {
         auto res = fread(data,sizeof(std::byte),size,file_);
 
         if (res != size) {
-            throw std::runtime_error("Failed to write all bytes to file");
+            throw std::runtime_error("Failed to read all bytes from file");
         }
 
         return res;

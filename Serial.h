@@ -166,8 +166,8 @@ namespace serial {
 
   template<typename T, std::size_t N>
   OBinaryFile& operator<<(OBinaryFile& file, const std::array<T,N>& x) {
-    for (const auto& elem : x) {
-      file << elem;
+    for (uint64_t i = 0; i < N; i++) {
+      file << x[i];
     }
     return file;
   }
@@ -177,8 +177,7 @@ namespace serial {
     const auto size = static_cast<uint64_t>(x.size());
     file << size;
     for (const auto& [key, value] : x) {
-      file << key;
-      file << value;
+      file << key << value;
     }
     return file;
   }
@@ -225,7 +224,8 @@ namespace serial {
   IBinaryFile& operator>>(IBinaryFile& file, std::array<T, N>& x) {
     T value;
     for (uint64_t i = 0; i < N; i++) {
-      x[N] = value;
+      file >> value;
+      x[i] = value;
     }
     return file;
   }
@@ -248,6 +248,7 @@ namespace serial {
     uint64_t size; file >> size;
     T value;
     for (uint64_t i = 0; i < size; i++) {
+      file >> value;
       x.insert(value);
     }
     return file;
