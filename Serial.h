@@ -213,7 +213,7 @@ namespace serial {
     uint64_t size;
     file >> size;
 
-    for (auto i = 0; i < size; i++) {
+    for (uint64_t i = 0; i < size; i++) {
       file >> value;
       x.push_back(value);
     }
@@ -223,10 +223,9 @@ namespace serial {
 
   template<typename T, std::size_t N>
   IBinaryFile& operator>>(IBinaryFile& file, std::array<T, N>& x) {
-    uint64_t size; file >> size;
     T value;
-    for (auto i = 0; i < size; i++) {
-      x.push_back(value);
+    for (uint64_t i = 0; i < N; i++) {
+      x[N] = value;
     }
     return file;
   }
@@ -237,7 +236,7 @@ namespace serial {
     K key;
     V value;
 
-    for (auto i = 0; i < size; i++) {
+    for (uint64_t i = 0; i < size; i++) {
       file >> key >> value;
       x.insert({key,value});
     }
@@ -248,7 +247,7 @@ namespace serial {
   IBinaryFile& operator>>(IBinaryFile& file, std::set<T>& x) {
     uint64_t size; file >> size;
     T value;
-    for (auto i = 0; i < size; i++) {
+    for (uint64_t i = 0; i < size; i++) {
       x.insert(value);
     }
     return file;
