@@ -459,6 +459,36 @@ TEST(SerialIBinaryFileOperatorTest,stringOperator) {
   }
 }
 
+TEST(SerialIBinaryFileOperatorTest,vectorOperator1) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::vector<int32_t> v = {1, 2, 3, 4, 5};
+    file << v;
+
+    serial::IBinaryFile f2(filename);
+    std::vector<int32_t> result;
+    f2 >> result;
+
+    EXPECT_EQ(result, v);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,vectorOperator2) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::vector<int32_t> v = {1, 2, -1, -7647, 5654653};
+    file << v;
+
+    serial::IBinaryFile f2(filename);
+    std::vector<int32_t> result;
+    f2 >> result;
+
+    EXPECT_EQ(result, v);
+  }
+}
+
 int main(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
