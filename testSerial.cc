@@ -291,6 +291,36 @@ TEST(SerialOBinaryFileBool, writeFalse) {
     EXPECT_FALSE(result);
   }
 }
+TEST(SerialOBinaryFileString, basic) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    const std::string value = "test";
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::string result;
+    file >> result;
+
+    EXPECT_EQ(result, "test");
+  }
+}
+TEST(SerialObinaryFileString, emptyString) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    const std::string value;
+    file << value;
+  }
+  {
+    serial::IBinaryFile file(filename);
+    std::string result;
+    file >> result;
+
+    EXPECT_EQ(result, "");
+  }
+}
 
 
 
