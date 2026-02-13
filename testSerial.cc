@@ -340,6 +340,155 @@ TEST(SerialIBinaryFileOperatorTest,uint8_tOperator) {
   */
 }
 
+TEST(SerialIBinaryFileOperatorTest,floatOperator) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr float value = 0.5;
+    file << value;
+  }
+
+  {
+    serial::IBinaryFile file(filename);
+    float result = 0;
+    file >> result;
+    printf("%f\n", result);
+    EXPECT_EQ(result, 0.5);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,floatOperatorInfiniteFraction) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr float value = 0.33333334f;
+    file << value;
+  }
+
+  {
+    serial::IBinaryFile file(filename);
+    float result = 0;
+    file >> result;
+    printf("%f\n", result);
+    EXPECT_EQ(result, 0.33333334f);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,doubleOperator) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr double value = 0.5;
+    file << value;
+  }
+
+  {
+    serial::IBinaryFile file(filename);
+    double result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 0.5);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,doubleOperatorInfiniteFraction) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr double value = 0.33333334f;
+    file << value;
+  }
+
+  {
+    serial::IBinaryFile file(filename);
+    double result = 0;
+    file >> result;
+
+    EXPECT_EQ(result, 0.33333334f);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,booleanOperatorTrue) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr bool value = true;
+    file << value;
+  }
+
+  {
+    serial::IBinaryFile file(filename);
+    bool result;
+    file >> result;
+
+    EXPECT_TRUE(result);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,booleanOperatorFalse) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    constexpr bool value = false;
+    file << value;
+  }
+
+  {
+    serial::IBinaryFile file(filename);
+    bool result;
+    file >> result;
+
+    EXPECT_FALSE(result);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,stringOperator) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    const std::string text = "hello world";
+    file << text;
+  }
+
+  {
+    serial::IBinaryFile file(filename);
+    std::string result;
+    file >> result;
+
+    EXPECT_EQ(result, "hello world");
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,vectorOperator1) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::vector<int32_t> v = {1, 2, 3, 4, 5};
+    file << v;
+
+    serial::IBinaryFile f2(filename);
+    std::vector<int32_t> result;
+    f2 >> result;
+
+    EXPECT_EQ(result, v);
+  }
+}
+
+TEST(SerialIBinaryFileOperatorTest,vectorOperator2) {
+  const std::string filename = "test.txt";
+  {
+    serial::OBinaryFile file(filename);
+    std::vector<int32_t> v = {1, 2, -1, -7647, 5654653};
+    file << v;
+
+    serial::IBinaryFile f2(filename);
+    std::vector<int32_t> result;
+    f2 >> result;
+
+    EXPECT_EQ(result, v);
+  }
+}
+
 int main(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
