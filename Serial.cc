@@ -3,6 +3,7 @@
 #include <charconv>
 #include <stdexcept>
 #include <utility>
+#include <cstring>
 
 #include <stdexcept>
 
@@ -189,16 +190,17 @@ namespace serial {
     std::size_t IBinaryFile::read(std::byte* data, std::size_t size) {
         auto res = fread(data,sizeof(std::byte),size,file_);
 
+        if (res != size) {
+            throw std::runtime_error("Failed to write all bytes to file");
+        }
+
         return res;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, int8_t& x) {
         std::byte data;
         x = 0;
-        size_t res = file.read(&data,1);
-
-        if (res == 0)
-            throw std::runtime_error("End of file reached");
+        file.read(&data,1);
 
         x = std::to_integer<int8_t>(data);
 
@@ -209,10 +211,7 @@ namespace serial {
         std::byte data;
         x = 0;
 
-        size_t res = file.read(&data,1);
-
-        if (res == 0)
-            throw std::runtime_error("End of file reached");
+        file.read(&data,1);
 
         x = static_cast<uint8_t>(data);
 
@@ -224,13 +223,12 @@ namespace serial {
         uint16_t y = 0;
 
         for (int i = 1; i >= 0; i--) {
-            size_t res = file.read(&data,1);
-            if (res == 0)
-                throw std::runtime_error("End of file reached");
+            file.read(&data,1);
 
             auto tmp = std::to_integer<uint8_t>(data);
             y |= static_cast<uint16_t>(tmp) << (8 * i);
         }
+
         x = static_cast<int16_t>(y);
         return file;
     }
@@ -240,9 +238,7 @@ namespace serial {
         x = 0;
 
         for (int i = 1; i >= 0; i--) {
-            size_t res = file.read(&data,1);
-            if (res == 0)
-                throw std::runtime_error("End of file reached");
+            file.read(&data,1);
 
             auto tmp = std::to_integer<uint8_t>(data);
             x |= static_cast<uint16_t>(tmp) << (8 * i);
@@ -256,9 +252,7 @@ namespace serial {
         uint32_t y = 0;
 
         for (int i = 3; i >= 0; i--) {
-            size_t res = file.read(&data,1);
-            if (res == 0)
-                throw std::runtime_error("End of file reached");
+            file.read(&data,1);
 
             auto tmp = std::to_integer<uint8_t>(data);
             y |= static_cast<uint32_t>(tmp) << (8 * i);
@@ -272,9 +266,7 @@ namespace serial {
         x = 0;
 
         for (int i = 3; i >= 0; i--) {
-            size_t res = file.read(&data,1);
-            if (res == 0)
-                throw std::runtime_error("End of file reached");
+            file.read(&data,1);
 
             auto tmp = std::to_integer<uint8_t>(data);
             x |= static_cast<uint32_t>(tmp) << (8 * i);
@@ -288,9 +280,7 @@ namespace serial {
         uint64_t y = 0;
 
         for (int i = 7; i >= 0; i--) {
-            size_t res = file.read(&data,1);
-            if (res == 0)
-                throw std::runtime_error("End of file reached");
+            file.read(&data,1);
 
             auto tmp = std::to_integer<uint8_t>(data);
             y |= static_cast<uint64_t>(tmp) << (8 * i);
@@ -304,9 +294,7 @@ namespace serial {
         x = 0;
 
         for (int i = 7; i >= 0; i--) {
-            size_t res = file.read(&data,1);
-            if (res == 0)
-                throw std::runtime_error("End of file reached");
+            file.read(&data,1);
 
             auto tmp = std::to_integer<uint8_t>(data);
             x |= static_cast<uint64_t>(tmp) << (8 * i);
@@ -318,10 +306,7 @@ namespace serial {
     IBinaryFile& operator>>(IBinaryFile& file, char& x) {
         std::byte data;
 
-        size_t res = file.read(&data,1);
-
-        if (res == 0)
-            throw std::runtime_error("End of file reached");
+        file.read(&data,1);
 
         auto tmp = static_cast<unsigned char>(data);
         x = static_cast<char>(tmp);
@@ -330,18 +315,49 @@ namespace serial {
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, float& x) {
+        std::byte data[4];
+
+        for (int i = 0; i < 4; i++) {
+            file.read(&data[i],1);
+        }
+
+        std::memcpy(&x,&data,sizeof(float));
+
         return file;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, double& x) {
+        std::byte data[8];
+
+        for (int i = 0; i < 8; i++) {
+            file.read(&data[i],1);
+        }
+
+        std::memcpy(&x,&data,sizeof(double));
+
         return file;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, bool& x) {
+        std::byte data;
+
+        file.read(&data,1);
+
+        x = static_cast<bool>(data);
+
         return file;
     }
 
     IBinaryFile& operator>>(IBinaryFile& file, std::string& x) {
+        char c;
+        uint64_t size;
+        file >> size;
+
+        for (auto i = 0; i < size; i++) {
+            file >> c;
+            x.push_back(c);
+        }
+
         return file;
     }
 }
