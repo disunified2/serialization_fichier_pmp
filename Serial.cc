@@ -353,7 +353,7 @@ namespace serial {
         uint64_t size;
         file >> size;
 
-        for (auto i = 0; i < size; i++) {
+        for (uint64_t i = 0; i < size; i++) {
             file >> c;
             x.push_back(c);
         }
