@@ -1,8 +1,12 @@
 #include "Serial.h"
+
+#include <charconv>
 #include <stdexcept>
 #include <utility>
 
 #include <stdexcept>
+
+#include "gtest/gtest-printers.h"
 
 namespace serial {
 
@@ -124,16 +128,13 @@ namespace serial {
 
         if (file_ == nullptr)
             throw std::runtime_error(filename + " could not be opened");
-
-        this->position = 0;
     }
 
     //Destructor
     IBinaryFile::~IBinaryFile() {
         if (file_) {
-            auto res = std::fclose(file_);
-            if (res != 0)
-                throw std::runtime_error("File could not be closed");
+            std::fclose(file_);
+
             file_ = nullptr;
         }
     }
@@ -162,8 +163,6 @@ namespace serial {
     std::size_t IBinaryFile::read(std::byte* data, std::size_t size) {
         auto res = fread(data,sizeof(std::byte),size,file_);
 
-        position += res;
-
         return res;
     }
 
@@ -175,7 +174,7 @@ namespace serial {
         if (res == 0)
             throw std::runtime_error("End of file reached");
 
-        x = to_integer<int8_t>(data);
+        x = std::to_integer<int8_t>(data);
 
         return file;
     }
@@ -287,6 +286,36 @@ namespace serial {
             x |= static_cast<uint64_t>(tmp) << (8 * i);
         }
 
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, char& x) {
+        std::byte data;
+
+        size_t res = file.read(&data,1);
+
+        if (res == 0)
+            throw std::runtime_error("End of file reached");
+
+        auto tmp = static_cast<unsigned char>(data);
+        x = static_cast<char>(tmp);
+
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, float& x) {
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, double& x) {
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, bool& x) {
+        return file;
+    }
+
+    IBinaryFile& operator>>(IBinaryFile& file, std::string& x) {
         return file;
     }
 }
